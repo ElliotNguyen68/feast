@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import re
 from collections import defaultdict
 from datetime import datetime, timezone
 from typing import (
@@ -752,7 +753,7 @@ def _non_empty_value(value: Any) -> bool:
 
 def spark_to_feast_value_type(spark_type_as_str: str) -> ValueType:
     # TODO not all spark types are convertible
-    # Current non-convertible types: interval, map, struct, structfield, decimal, binary
+    # Current non-convertible types: interval, map, struct, structfield, binary
     type_map: Dict[str, ValueType] = {
         "null": ValueType.UNKNOWN,
         "byte": ValueType.BYTES,
@@ -762,6 +763,7 @@ def spark_to_feast_value_type(spark_type_as_str: str) -> ValueType:
         "bigint": ValueType.INT64,
         "long": ValueType.INT64,
         "double": ValueType.DOUBLE,
+        "decimal": ValueType.DOUBLE,
         "float": ValueType.FLOAT,
         "boolean": ValueType.BOOL,
         "timestamp": ValueType.UNIX_TIMESTAMP,
@@ -774,6 +776,10 @@ def spark_to_feast_value_type(spark_type_as_str: str) -> ValueType:
         "array<boolean>": ValueType.BOOL_LIST,
         "array<timestamp>": ValueType.UNIX_TIMESTAMP_LIST,
     }
+    decimal_regex_pattern = r"^decimal\([0-9]{1,2},[0-9]{1,2}\)$"
+    if re.match(decimal_regex_pattern, spark_type_as_str):
+        spark_type_as_str = "decimal"
+
     # TODO: Find better way of doing this.
     if not isinstance(spark_type_as_str, str) or spark_type_as_str not in type_map:
         return ValueType.NULL
