@@ -48,16 +48,15 @@ REQUIRED = [
     "Jinja2>=2,<4",
     "jsonschema",
     "mmh3",
-    "numpy>=1.22,<1.25",
+    "numpy>=1.22,<2",
     "pandas>=1.4.3,<3",
-    # Higher than 4.23.4 seems to cause a seg fault
     "protobuf>=4.24.0,<5.0.0",
     "pyarrow>=4",
     "pydantic>=2.0.0",
     "pygments>=2.12.0,<3",
     "PyYAML>=5.4.0,<7",
     "requests",
-    "SQLAlchemy[mypy]>1,<2",
+    "SQLAlchemy[mypy]>1",
     "tabulate>=0.8.0,<1",
     "tenacity>=7,<9",
     "toml>=0.10.0,<1",
@@ -66,11 +65,7 @@ REQUIRED = [
     "fastapi>=0.68.0",
     "uvicorn[standard]>=0.14.0,<1",
     "gunicorn; platform_system != 'Windows'",
-    # https://github.com/dask/dask/issues/10996
-    "dask>=2021.1.0,<2024.3.0",
-    "bowler",  # Needed for automatic repo upgrades
-    "importlib-resources>=6.0.0,<7",
-    "importlib_metadata>=6.8.0,<7",
+    "dask[dataframe]>=2024.4.2",
 ]
 
 GCP_REQUIRED = [
@@ -91,7 +86,7 @@ REDIS_REQUIRED = [
 
 AWS_REQUIRED = ["boto3>=1.17.0,<2", "docker>=5.0.2", "fsspec<=2024.1.0"]
 
-BYTEWAX_REQUIRED = ["bytewax==0.15.1", "docker>=5.0.2", "kubernetes<=20.13.0"]
+KUBERNETES_REQUIRED = ["kubernetes<=20.13.0"]
 
 SNOWFLAKE_REQUIRED = [
     "snowflake-connector-python[pandas]>=3.7,<4",
@@ -131,6 +126,10 @@ ROCKSET_REQUIRED = [
     "rockset>=1.0.3",
 ]
 
+IKV_REQUIRED = [
+    "ikvpy>=0.0.23",
+]
+
 HAZELCAST_REQUIRED = [
     "hazelcast-python-client>=5.1",
 ]
@@ -147,18 +146,16 @@ GRPCIO_REQUIRED = [
     "grpcio-health-checking>=1.56.2,<2",
 ]
 
-DUCKDB_REQUIRED = [
-    "ibis-framework[duckdb]"
-]
+DUCKDB_REQUIRED = ["ibis-framework[duckdb]"]
+
+DELTA_REQUIRED = ["deltalake"]
 
 CI_REQUIRED = (
     [
         "build",
         "virtualenv==20.23.0",
         "cryptography>=35.0,<43",
-        "flake8>=6.0.0,<6.1.0",
-        "black>=22.6.0,<23",
-        "isort>=5,<6",
+        "ruff>=0.3.3",
         "grpcio-testing>=1.56.2,<2",
         # FastAPI does not correctly pull starlette dependency on httpx see thread(https://github.com/tiangolo/fastapi/issues/5656).
         "httpx>=0.23.3",
@@ -179,7 +176,7 @@ CI_REQUIRED = (
         "pytest-mock==1.10.4",
         "pytest-env",
         "Sphinx>4.0.0,<7",
-        "testcontainers>=3.5,<4",
+        "testcontainers==4.4.0",
         "firebase-admin>=5.2.0,<6",
         "pre-commit<3.3.2",
         "assertpy==1.1",
@@ -198,7 +195,7 @@ CI_REQUIRED = (
     + GCP_REQUIRED
     + REDIS_REQUIRED
     + AWS_REQUIRED
-    + BYTEWAX_REQUIRED
+    + KUBERNETES_REQUIRED
     + SNOWFLAKE_REQUIRED
     + SPARK_REQUIRED
     + POSTGRES_REQUIRED
@@ -213,6 +210,7 @@ CI_REQUIRED = (
     + IBIS_REQUIRED
     + GRPCIO_REQUIRED
     + DUCKDB_REQUIRED
+    + DELTA_REQUIRED
 )
 
 DOCS_REQUIRED = CI_REQUIRED
@@ -360,7 +358,7 @@ setup(
         "ci": CI_REQUIRED,
         "gcp": GCP_REQUIRED,
         "aws": AWS_REQUIRED,
-        "bytewax": BYTEWAX_REQUIRED,
+        "k8s": KUBERNETES_REQUIRED,
         "redis": REDIS_REQUIRED,
         "snowflake": SNOWFLAKE_REQUIRED,
         "spark": SPARK_REQUIRED,
@@ -376,7 +374,9 @@ setup(
         "grpcio": GRPCIO_REQUIRED,
         "rockset": ROCKSET_REQUIRED,
         "ibis": IBIS_REQUIRED,
-        "duckdb": DUCKDB_REQUIRED
+        "duckdb": DUCKDB_REQUIRED,
+        "ikv": IKV_REQUIRED,
+        "delta": DELTA_REQUIRED,
     },
     include_package_data=True,
     license="Apache",

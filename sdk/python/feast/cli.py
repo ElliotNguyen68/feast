@@ -14,6 +14,7 @@
 import json
 import logging
 from datetime import datetime
+from importlib.metadata import version as importlib_version
 from pathlib import Path
 from typing import List, Optional
 
@@ -21,7 +22,6 @@ import click
 import yaml
 from colorama import Fore, Style
 from dateutil import parser
-from importlib_metadata import version as importlib_version
 from pygments import formatters, highlight, lexers
 
 from feast import utils
@@ -31,7 +31,6 @@ from feast.constants import (
 )
 from feast.errors import FeastObjectNotFoundException, FeastProviderLoginError
 from feast.feature_view import FeatureView
-from feast.infra.contrib.grpc_server import get_grpc_server
 from feast.on_demand_feature_view import OnDemandFeatureView
 from feast.repo_config import load_repo_config
 from feast.repo_operations import (
@@ -44,7 +43,6 @@ from feast.repo_operations import (
     registry_dump,
     teardown,
 )
-from feast.repo_upgrade import RepoUpgrader
 from feast.utils import maybe_local_tz
 
 _logger = logging.getLogger(__name__)
@@ -596,6 +594,7 @@ def materialize_incremental_command(ctx: click.Context, end_ts: str, views: List
             "cassandra",
             "rockset",
             "hazelcast",
+            "ikv",
         ],
         case_sensitive=False,
     ),
@@ -734,6 +733,8 @@ def listen_command(
     registry_ttl_sec: int,
 ):
     """Start a gRPC feature server to ingest streaming features on given address"""
+    from feast.infra.contrib.grpc_server import get_grpc_server
+
     store = create_feature_store(ctx)
     server = get_grpc_server(address, store, max_workers, registry_ttl_sec)
     server.start()
@@ -830,27 +831,6 @@ def validate(
     print(f"{Style.BRIGHT + Fore.RED}Validation failed!{Style.RESET_ALL}")
     print(colorful_json)
     exit(1)
-
-
-@cli.command("repo-upgrade", cls=NoOptionDefaultFormat)
-@click.option(
-    "--write",
-    is_flag=True,
-    default=False,
-    help="Upgrade a feature repo to use the API expected by feast 0.23.",
-)
-@click.pass_context
-def repo_upgrade(ctx: click.Context, write: bool):
-    """
-    Upgrade a feature repo in place.
-    """
-    repo = ctx.obj["CHDIR"]
-    fs_yaml_file = ctx.obj["FS_YAML_FILE"]
-    cli_check_repo(repo, fs_yaml_file)
-    try:
-        RepoUpgrader(repo, write).upgrade()
-    except FeastProviderLoginError as e:
-        print(str(e))
 
 
 if __name__ == "__main__":

@@ -1,8 +1,4 @@
-FROM python:3.9
-
-# Input the feast version to install
-# This requires feast package to be available in pypi before building this image
-ARG VERSION
+FROM python:3.11
 
 RUN apt update && \
         apt install -y \
@@ -11,7 +7,8 @@ RUN apt update && \
         build-essential
 
 RUN pip install pip --upgrade
-RUN pip install "feast[aws,gcp,snowflake,redis,go,mysql,postgres]==${VERSION}"
+RUN pip install "feast[aws,gcp,snowflake,redis,go,mysql,postgres]"
+
 
 RUN apt update
 RUN apt install -y -V ca-certificates lsb-release wget
@@ -19,3 +16,4 @@ RUN wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | 
 RUN apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
 RUN apt update
 RUN apt -y install libarrow-dev
+RUN mkdir -m 775 /.cache
