@@ -51,7 +51,7 @@ REQUIRED = [
     "numpy>=1.22,<2",
     "pandas>=1.4.3,<3",
     "protobuf>=4.24.0,<5.0.0",
-    "pyarrow>=4",
+    "pyarrow==15.0.2",
     "pydantic>=2.0.0",
     "pygments>=2.12.0,<3",
     "PyYAML>=5.4.0,<7",
