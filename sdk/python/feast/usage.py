@@ -53,7 +53,7 @@ _constant_attributes = {
         ",".join(
             sorted([k for k in os.environ.keys() if not k.startswith("FEAST")])
         ).encode(),
-        usedforsecurity=False,
+        # usedforsecurity=False,
     ).hexdigest(),
 }
 
