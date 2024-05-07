@@ -38,7 +38,7 @@ NAME = "feast"
 DESCRIPTION = "Python SDK for Feast"
 URL = "https://github.com/feast-dev/feast"
 AUTHOR = "Feast"
-REQUIRES_PYTHON = ">=3.9.0"
+REQUIRES_PYTHON = ">=3.8.0"
 
 REQUIRED = [
     "click>=7.0.0,<9.0.0",
@@ -65,7 +65,7 @@ REQUIRED = [
     "fastapi>=0.68.0",
     "uvicorn[standard]>=0.14.0,<1",
     "gunicorn; platform_system != 'Windows'",
-    "dask[dataframe]>=2024.4.2",
+    "dask[dataframe]>=2021.1.0",
 ]
 
 GCP_REQUIRED = [
@@ -176,7 +176,7 @@ CI_REQUIRED = (
         "pytest-mock==1.10.4",
         "pytest-env",
         "Sphinx>4.0.0,<7",
-        "testcontainers==4.4.0",
+        "testcontainers==4.3.3",
         "firebase-admin>=5.2.0,<6",
         "pre-commit<3.3.2",
         "assertpy==1.1",
